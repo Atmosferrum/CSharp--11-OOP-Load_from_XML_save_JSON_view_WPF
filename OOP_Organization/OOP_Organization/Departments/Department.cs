@@ -51,7 +51,7 @@ namespace OOP_Organization
 
         protected string name { get; set; }
         protected DateTime dateOfCreation { get; set; }
-        public int numberOfEmployees { get; set; }
+        protected int numberOfEmployees { get; set; }
         protected int numberOfDepartments { get; set; }
         protected string parentDepartment { get; set; }
         protected List<Department> departments;

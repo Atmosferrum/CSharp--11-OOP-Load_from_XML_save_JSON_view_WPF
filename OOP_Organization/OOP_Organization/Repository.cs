@@ -8,8 +8,7 @@ using System.Xml.Linq;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Diagnostics;
-//using System.Collections.ObjectModel;
-//using System.Collections.Specialized;
+using System.Xml;
 
 namespace OOP_Organization
 {
@@ -51,138 +50,129 @@ namespace OOP_Organization
 
             company = new Company(companyName);
 
-            Create();
-            Save();
+            manualDeserializeXML(path);
         }
 
         #endregion Constructor;
 
         #region Methods;
 
-        void Create()
+        void manualDeserializeXML(string path)
         {
-            //AddDepartment(new Organization("Organization", DateTime.Now, ""));
+            string xml = File.ReadAllText(path);
+            XmlDocument doc = new XmlDocument();
+            doc.Load(path);
 
-            AddDepartment(new Bureau("Management", companyName, this));            
-            AddDepartment(new Bureau("Strategy", companyName, this));
-            AddDepartment(new Division("Marketing", "Management", this));
-            AddDepartment(new Division("PR", "Management", this));
-            AddDepartment(new Division("Production", "Strategy", this));
-            AddDepartment(new Division("HR", "Strategy", this));
+            var companyXML = XDocument.Parse(xml)
+                                         .Descendants("OOP_Organization.Company")
+                                         .ToList();
 
-            AddEmloyee(new HeadOfOrganization(0, "Commander", "Shepard", 99, company.Name, 365 * 2, this));
+            var bureauXML = XDocument.Parse(xml)
+                                         .Descendants("OOP_Organization.Company")
+                                         .Descendants("OOP_Organization.Bureau")
+                                         .ToList();
 
-            foreach (Department dept in departments)
+            var divisiontXML = XDocument.Parse(xml)
+                                         .Descendants("OOP_Organization.Company")
+                                         .Descendants("OOP_Organization.Bureau")
+                                         .Descendants("OOP_Organization.Division")
+                                         .ToList();
+
+            companyXML.Concat(bureauXML).Concat(divisiontXML);
+
+            foreach (var dept in companyXML)
             {
-                AddEmloyee(new HeadOfDepartment(0, "Liara", "T'Soni", 45, dept.Name,  365, this));
-                AddEmloyee(new Worker(1, "Tali", "Zorah", 33, dept.Name, 365, this));
-                AddEmloyee(new Worker(1, "Miranda", "Lawson", 41, dept.Name,  185, this));
-                AddEmloyee(new Worker(1, "Garrus", "Vakarian", 57, dept.Name, 65, this));
-                AddEmloyee(new Intern(1, "Zaeed", "Massani", 23, dept.Name, 365, this));
-                AddEmloyee(new Intern(1, "Urdnot", "Wrex", 24, dept.Name, 185, this));
-                AddEmloyee(new Intern(1, "Mordin", "Solus", 25, dept.Name, 65, this));
-                AddEmloyee(new Intern(1, "Thane", "Krios", 27, dept.Name, 30, this));
-            }
-        }
-
-        void Save()
-        {
-            CreateToSave();
-        }
-
-        void CreateToSave()
-        {
-            XElement myCompany = new XElement(company.GetType().ToString());
-            XAttribute companyName = new XAttribute("name", company.Name);
-            XAttribute companyDateOfCreation = new XAttribute("dateOfCreation", DateTime.Now.ToShortDateString());
-            XAttribute companyNumberOfEmployees = new XAttribute("numberOfEmployees", company.NumberOfEmployees);
-            XAttribute companyNumberOfDepartments = new XAttribute("numberOfDepartments", company.NumberOfDepartments);
-            XAttribute companyParentDepartment = new XAttribute("parentDepartment", "");
-            myCompany.Add(companyName,
-                          companyDateOfCreation,
-                          companyNumberOfEmployees,
-                          companyNumberOfDepartments,
-                          companyParentDepartment);
-
-            EmployeeToSave(company.Name, ref myCompany);
-
-            xElements.Add(myCompany);
-
-            foreach (Department dept in departments)
-            {
-                XElement myDepartment = new XElement(dept.GetType().ToString());
-                XAttribute departmentName = new XAttribute("name", dept.Name);
-                XAttribute departmentDateOfCreation = new XAttribute("dateOfCreation", DateTime.Now.ToShortDateString());
-                XAttribute departmentNumberOfEmployees = new XAttribute("numberOfEmployees", dept.NumberOfEmployees);
-                XAttribute departmentNumberDepartments = new XAttribute("numberOfDepartments", dept.NumberOfDepartments);
-                XAttribute departmentParentDepartment = new XAttribute("parentDepartment", dept.ParentDepartment);
-                myDepartment.Add(departmentName,
-                                 departmentDateOfCreation,
-                                 departmentNumberOfEmployees,
-                                 departmentNumberDepartments,
-                                 departmentParentDepartment);
-
-                EmployeeToSave(dept.Name, ref myDepartment);
-
-                xElements.Add(myDepartment);
-            }
-
-            OrganizeToSave();
-        }
-
-        void OrganizeToSave()
-        {
-            XElement father;
-            father = xElements.Find(item => (string)item.Attribute("name") == companyName);
-
-            foreach (XElement x in xElements)
-            {
-                switch ((string)x.Attribute("parentDepartment"))
+                switch ((string)dept.Attribute("parentDepartment"))
                 {
-                    case "Strategy":
-                        XElement strategy;
-                        strategy = xElements.Find(item => (string)item.Attribute("name") == "Strategy");
-                        strategy.Add(x);
-                        break;
-                    case "Management":
-                        XElement management;
-                        management = xElements.Find(item => (string)item.Attribute("name") == "Management");
-                        management.Add(x);
-                        break;
                     case companyName:
-                        father.Add(x);
+                        AddDepartment(new Bureau(dept.Attribute("name").Value,
+                                      Convert.ToString(dept.Attribute("parentDepartment").Value),
+                                      this));
+                        break;
+                    case "":
+                        new Company(dept.Attribute("name").Value);
                         break;
                     default:
+                        AddDepartment(new Division(dept.Attribute("name").Value,
+                                      Convert.ToString(dept.Attribute("parentDepartment").Value),
+                                      this));
                         break;
                 }
             }
 
-            father.Save("new.xml");
+            XmlNodeList employeeList = doc.GetElementsByTagName("EMPLOYEE");
+
+            foreach(XElement emply in employeeList)
+            {
+                switch((int)emply.Attribute("number"))
+                {
+                    case 0:
+                        switch ((string)emply.Attribute("Department"))
+                        {
+                            case companyName:
+                                AddEmployee(new HeadOfOrganization(Convert.ToInt32(emply.Attribute("number").Value),
+                                            emply.Attribute("name").Value,
+                                            emply.Attribute("lastName").Value,
+                                            Convert.ToInt32(emply.Attribute("age").Value),
+                                            emply.Attribute("department").Value,
+                                            Convert.ToInt32(emply.Attribute("daysWorked").Value),
+                                            this));
+                                break;
+                            default:
+                                AddEmployee(new HeadOfDepartment(Convert.ToInt32(emply.Attribute("number").Value),
+                                            emply.Attribute("name").Value,
+                                            emply.Attribute("lastName").Value,
+                                            Convert.ToInt32(emply.Attribute("age").Value),
+                                            emply.Attribute("department").Value,
+                                            Convert.ToInt32(emply.Attribute("daysWorked").Value),
+                                            this));
+                                break;
+                        }
+                        break;
+                    case 1:
+                        switch ((int)emply.Attribute("Salary"))
+                        {
+                            case 500:
+                                AddEmployee(new Intern(Convert.ToInt32(emply.Attribute("number").Value),
+                                           emply.Attribute("name").Value,
+                                           emply.Attribute("lastName").Value,
+                                           Convert.ToInt32(emply.Attribute("age").Value),
+                                           emply.Attribute("department").Value,
+                                           Convert.ToInt32(emply.Attribute("daysWorked").Value),
+                                           this));
+                                break;
+                            default:
+                                AddEmployee(new Worker(Convert.ToInt32(emply.Attribute("number").Value),
+                                           emply.Attribute("name").Value,
+                                           emply.Attribute("lastName").Value,
+                                           Convert.ToInt32(emply.Attribute("age").Value),
+                                           emply.Attribute("department").Value,
+                                           Convert.ToInt32(emply.Attribute("daysWorked").Value),
+                                           this));
+                                break;
+                        }
+                        break;
+                }
+            }
+
+            ShowCompany();
         }
 
-        void EmployeeToSave(string name, ref XElement dept)
+
+        void ShowCompany()
         {
-            foreach (Employee emply in employees)
+            foreach(Department dept in departments)
             {
-                if (emply.Department == name)
-                {
-                    XElement myEmployee = new XElement("EMPLOYEE");
+                Debug.WriteLine($"{ dept.Name} {dept.ParentDepartment}");
+            }
 
-                    XAttribute employeeNumber = new XAttribute("number", emply.Number);
-                    XAttribute employeeName = new XAttribute("name", emply.Name);
-                    XAttribute employeeLastName = new XAttribute("lastName", emply.LastName);
-                    XAttribute employeeAge = new XAttribute("age", emply.Age);
-                    XAttribute employeeDepartment = new XAttribute("department", emply.Department);
-                    XAttribute employeeSalary = new XAttribute("salary", emply.Salary);
-                    XAttribute employeeNumberOfProjects = new XAttribute("daysWorked", emply.DaysWorked);
-
-                    myEmployee.Add(employeeNumber, employeeName, employeeLastName, employeeAge, employeeDepartment, employeeSalary, employeeNumberOfProjects);
-                    dept.Add(myEmployee);
-                }
+            foreach(Employee emply in employees)
+            {
+                Debug.WriteLine($"{emply.Name} {emply.Age} {emply.Department}");
             }
         }
 
-        void AddEmloyee(Employee newEmployee)
+        void AddEmployee(Employee newEmployee)
         {
             employees.Add(newEmployee);
             this.employeeIndex++;

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace OOP_Organization
 {
-    abstract class Department
+    class Department
     {
         #region Constructor;
 

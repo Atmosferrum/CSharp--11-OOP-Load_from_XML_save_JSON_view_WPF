@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace OOP_Organization
 {
-    abstract class Employee
+    class Employee
     {
         #region Fields;
 

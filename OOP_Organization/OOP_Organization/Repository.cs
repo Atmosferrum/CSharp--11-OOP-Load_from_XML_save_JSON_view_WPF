@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
-using System.Xml.Linq;
+//using System.Xml.Linq;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Diagnostics;
@@ -20,7 +20,7 @@ namespace OOP_Organization
 
         public List<Department> departments; //Departments DATA array
 
-        List<XElement> xElements; //XML Data
+        //List<XElement> xElements; //XML Data
 
         private string path; //PATH to file
 
@@ -46,116 +46,117 @@ namespace OOP_Organization
             this.departmentIndex = 0;
             employees = new List<Employee>();
             departments = new List<Department>();
-            this.xElements = new List<XElement>();
+            //this.xElements = new List<XElement>();
 
             company = new Company(companyName);
 
-            manualDeserializeXML(path);
+            //manualDeserializeXML(path);
+
+            autoDesiarilizationXML(path);
         }
 
         #endregion Constructor;
 
         #region Methods;
 
-        void manualDeserializeXML(string path)
+        void autoDesiarilizationXML(string path)
         {
-            string xml = File.ReadAllText(path);
-            XmlDocument doc = new XmlDocument();
-            doc.Load(path);
+            XmlDocument xDoc = new XmlDocument();
+            xDoc.Load(path);
 
-            var companyXML = XDocument.Parse(xml)
-                                         .Descendants("OOP_Organization.Company")
-                                         .ToList();
+            XmlElement xRoot = xDoc.DocumentElement;
 
-            var bureauXML = XDocument.Parse(xml)
-                                         .Descendants("OOP_Organization.Company")
-                                         .Descendants("OOP_Organization.Bureau")
-                                         .ToList();
+            XmlNode xCompany = xRoot;  
+            
 
-            var divisiontXML = XDocument.Parse(xml)
-                                         .Descendants("OOP_Organization.Company")
-                                         .Descendants("OOP_Organization.Bureau")
-                                         .Descendants("OOP_Organization.Division")
-                                         .ToList();
+            Company company = new Company(Convert.ToString(xCompany.Attributes.GetNamedItem("name").Value));
 
-            companyXML.Concat(bureauXML).Concat(divisiontXML);
+            if (xCompany.HasChildNodes)
+                Recursion(xCompany);
 
-            foreach (var dept in companyXML)
+            for (int i = 0; i < employees.Count; i++)
             {
-                switch ((string)dept.Attribute("parentDepartment"))
+                var tempEmployee = employees[i];
+                var properties = tempEmployee.GetType().GetProperties();
+                employees[i] = ReturnEmployeeTypes(employees[i]);
+                var anotherProperties = employees[i].GetType().GetProperties();
+                foreach (var property in properties)
                 {
-                    case companyName:
-                        AddDepartment(new Bureau(dept.Attribute("name").Value,
-                                      Convert.ToString(dept.Attribute("parentDepartment").Value),
-                                      this));
-                        break;
-                    case "":
-                        new Company(dept.Attribute("name").Value);
-                        break;
-                    default:
-                        AddDepartment(new Division(dept.Attribute("name").Value,
-                                      Convert.ToString(dept.Attribute("parentDepartment").Value),
-                                      this));
-                        break;
+                    foreach (var anotherPropertie in anotherProperties)
+                        anotherPropertie.SetValue(employees[i], property.GetValue(tempEmployee));
                 }
+                Debug.WriteLine($"{employees[i].GetType().Name}" +
+                                $"\n -------o-------");
             }
 
-            XmlNodeList employeeList = doc.GetElementsByTagName("EMPLOYEE");
-
-            foreach(XElement emply in employeeList)
-            {
-                switch((int)emply.Attribute("number"))
-                {
-                    case 0:
-                        switch ((string)emply.Attribute("Department"))
-                        {
-                            case companyName:
-                                AddEmployee(new HeadOfOrganization(Convert.ToInt32(emply.Attribute("number").Value),
-                                            emply.Attribute("name").Value,
-                                            emply.Attribute("lastName").Value,
-                                            Convert.ToInt32(emply.Attribute("age").Value),
-                                            emply.Attribute("department").Value,
-                                            Convert.ToInt32(emply.Attribute("daysWorked").Value),
-                                            this));
-                                break;
-                            default:
-                                AddEmployee(new HeadOfDepartment(Convert.ToInt32(emply.Attribute("number").Value),
-                                            emply.Attribute("name").Value,
-                                            emply.Attribute("lastName").Value,
-                                            Convert.ToInt32(emply.Attribute("age").Value),
-                                            emply.Attribute("department").Value,
-                                            Convert.ToInt32(emply.Attribute("daysWorked").Value),
-                                            this));
-                                break;
-                        }
-                        break;
-                    case 1:
-                        switch ((int)emply.Attribute("Salary"))
-                        {
-                            case 500:
-                                AddEmployee(new Intern(Convert.ToInt32(emply.Attribute("number").Value),
-                                           emply.Attribute("name").Value,
-                                           emply.Attribute("lastName").Value,
-                                           Convert.ToInt32(emply.Attribute("age").Value),
-                                           emply.Attribute("department").Value,
-                                           Convert.ToInt32(emply.Attribute("daysWorked").Value),
-                                           this));
-                                break;
-                            default:
-                                AddEmployee(new Worker(Convert.ToInt32(emply.Attribute("number").Value),
-                                           emply.Attribute("name").Value,
-                                           emply.Attribute("lastName").Value,
-                                           Convert.ToInt32(emply.Attribute("age").Value),
-                                           emply.Attribute("department").Value,
-                                           Convert.ToInt32(emply.Attribute("daysWorked").Value),
-                                           this));
-                                break;
-                        }
-                        break;
-                }
-            }
+            foreach (Department dept in departments) ReturnDepartmentTypes(dept);
 
             ShowCompany();
+        }
+
+        Employee ReturnEmployeeTypes(Employee emply)
+        {
+            switch (emply.Department)
+            {
+                case "Normandy":
+                    return emply as HeadOfOrganization;
+                default:
+                    switch (emply.Number)
+                    {
+                        case 0:
+                            return emply as HeadOfDepartment;
+                        default:
+                            switch (emply.Salary)
+                            {
+                                case 500:
+                                    return emply as Intern;
+                                default:
+                                    return emply as Worker;
+                            }  
+                    }
+            }    
+        }
+
+        Department ReturnDepartmentTypes(Department dept)
+        {
+            switch (dept.ParentDepartment)
+            {
+                case "Normandy":
+                    return dept as Bureau;
+                default:
+                    return dept as Division;
+            }
+        }
+
+        void Recursion(XmlNode father)
+        {
+            var nodes = father.ChildNodes;  
+
+            foreach(XmlNode child in nodes)
+            {
+                if(child.Name != "EMPLOYEE")
+                {
+                    Department department = new Department(Convert.ToString(child.Attributes.GetNamedItem("name").Value),
+                                                           Convert.ToString(child.Attributes.GetNamedItem("parentDepartment").Value),
+                                                           this);
+                    AddDepartment(department);
+
+                    if (child.HasChildNodes)
+                        Recursion(child);
+                    
+                }
+                else
+                {
+                    Employee employee = new Employee(Convert.ToInt32(child.Attributes.GetNamedItem("number").Value),
+                                                     Convert.ToString(child.Attributes.GetNamedItem("name").Value),
+                                                     Convert.ToString(child.Attributes.GetNamedItem("lastName").Value),
+                                                     Convert.ToInt32(child.Attributes.GetNamedItem("age").Value),
+                                                     Convert.ToString(child.Attributes.GetNamedItem("department").Value),
+                                                     Convert.ToInt32(child.Attributes.GetNamedItem("daysWorked").Value),
+                                                     this);
+                    AddEmployee(employee);
+                }
+            }          
         }
 
 

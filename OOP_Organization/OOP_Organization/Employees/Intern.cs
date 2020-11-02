@@ -9,26 +9,23 @@ namespace OOP_Organization
 {
     class Intern : Employee, ISalary
     {
-
         public Intern(int Number, 
                       string Name, 
                       string LastName,
                       int Age, 
                       string Department, 
-                      int DaysWorked,
-                      Repository Repository)
+                      int DaysWorked)
             : base(Number, 
                    Name, 
                    LastName,
                    Age,
                    Department,
-                   DaysWorked,
-                   Repository)
+                   DaysWorked)
         {
             Salary = 500;
-
-            AddSalary();
         }
+
+        public Intern() : this(1, "", "", 0,"",0) { }
 
         public void AddSalary()
         {

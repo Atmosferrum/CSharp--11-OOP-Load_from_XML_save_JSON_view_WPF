@@ -28,8 +28,7 @@ namespace OOP_Organization
                         string LastName, 
                         int Age, 
                         string Department, 
-                        int DaysWorked,
-                        Repository Repository)
+                        int DaysWorked)
         {
             this.number = Number;
             this.name = Name;
@@ -37,9 +36,6 @@ namespace OOP_Organization
             this.age = Age;
             this.department = Department;
             this.daysWorked = DaysWorked;
-            this.repository = Repository;
-
-            AddMeToDepartment();
         }
 
         
@@ -88,6 +84,12 @@ namespace OOP_Organization
         {
             get { return this.daysWorked; }
             set { this.daysWorked = value; }
+        }
+
+        public Repository Repository
+        {
+            get { return this.repository; }
+            set { this.repository = value; AddMeToDepartment(); }
         }
 
         #endregion Properties

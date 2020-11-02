@@ -15,16 +15,16 @@ namespace OOP_Organization
                                 string LastName, 
                                 int Age, 
                                 string Department, 
-                                int DaysWorked,
-                                Repository Repository)
+                                int DaysWorked)
             : base(Number, 
                    Name, 
                    LastName, 
                    Age, 
                    Department,
-                   DaysWorked,
-                   Repository)
+                   DaysWorked)
         { }
+
+        public HeadOfDepartment() : this(1, "", "", 0, "", 0) { }
 
         public void AddSalary()
         {

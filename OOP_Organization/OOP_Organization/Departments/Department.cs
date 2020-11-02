@@ -12,8 +12,8 @@ namespace OOP_Organization
         #region Constructor;
 
         public Department(string Name,                       
-                          string ParentDepartment,
-                          Repository Repository)
+                          string ParentDepartment)
+                          //Repository Repository)
         {
             this.name = Name;
             this.dateOfCreation = DateTime.Now;
@@ -22,9 +22,9 @@ namespace OOP_Organization
             this.parentDepartment = ParentDepartment;
             employees = new List<Employee>();
             departments = new List<Department>();
-            this.repository = Repository;
+            //this.repository = Repository;
 
-            AddMeToCompany();
+           
         }
 
         private void AddMeToCompany()
@@ -90,6 +90,12 @@ namespace OOP_Organization
         {
             get { return this.parentDepartment; }
             set { this.parentDepartment = value; }
+        }
+
+        public Repository Repository
+        {
+            get { return this.repository; }
+            set { this.repository = value; AddMeToCompany(); }
         }
 
         #endregion Properties

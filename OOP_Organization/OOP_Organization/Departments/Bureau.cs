@@ -8,12 +8,14 @@ namespace OOP_Organization
 {
     class Bureau : Department
     {
-        public Bureau(string Name,                    
-                      string ParentDepartment,
-                      Repository Repository)
+        public Bureau(string ParentDepartment,
+                      string Name)
+                    //Repository Repository,)
             : base(Name, 
-                  ParentDepartment,
-                  Repository)
+                  ParentDepartment)
+                  //Repository)
         { }
-    }
+
+        public Bureau() : this( "", "") { }
+    }    
 }

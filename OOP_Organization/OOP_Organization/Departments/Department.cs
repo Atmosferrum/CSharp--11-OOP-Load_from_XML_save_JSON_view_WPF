@@ -13,7 +13,6 @@ namespace OOP_Organization
 
         public Department(string Name,                       
                           string ParentDepartment)
-                          //Repository Repository)
         {
             this.name = Name;
             this.dateOfCreation = DateTime.Now;
@@ -21,10 +20,7 @@ namespace OOP_Organization
             this.NumberOfDepartments = 0;
             this.parentDepartment = ParentDepartment;
             employees = new List<Employee>();
-            departments = new List<Department>();
-            //this.repository = Repository;
-
-           
+            departments = new List<Department>();           
         }
 
         private void AddMeToCompany()
@@ -54,7 +50,7 @@ namespace OOP_Organization
         protected int numberOfEmployees { get; set; }
         protected int numberOfDepartments { get; set; }
         protected string parentDepartment { get; set; }
-        protected List<Department> departments;
+        public List<Department> departments;
         public List<Employee> employees;
         protected Repository repository;
 

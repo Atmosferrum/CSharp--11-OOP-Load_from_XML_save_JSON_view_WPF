@@ -12,7 +12,7 @@ using System.Xml;
 
 namespace OOP_Organization
 {
-    struct Repository
+    class Repository
     {
         #region Fields;
 

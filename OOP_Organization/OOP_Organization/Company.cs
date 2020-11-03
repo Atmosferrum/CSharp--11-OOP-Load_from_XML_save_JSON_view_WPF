@@ -16,9 +16,9 @@ namespace OOP_Organization
 
         private string name;
 
-        public int numberOfDepartments;
+        private int numberOfDepartments;
 
-        public int numberOfEmployees;
+        private int numberOfEmployees;
 
         private string dateOfCreation;
 

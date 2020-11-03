@@ -10,10 +10,8 @@ namespace OOP_Organization
     {
         public Bureau(string ParentDepartment,
                       string Name)
-                    //Repository Repository,)
             : base(Name, 
                   ParentDepartment)
-                  //Repository)
         { }
 
         public Bureau() : this( "", "") { }

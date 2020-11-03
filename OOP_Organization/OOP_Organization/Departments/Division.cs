@@ -10,10 +10,8 @@ namespace OOP_Organization
     {
         public Division(string Name,
                         string ParentDepartment)
-                        //Repository Repository)
             : base(Name,
                   ParentDepartment)
-                  //Repository)
         { }
 
         public Division() : this("", "") { }

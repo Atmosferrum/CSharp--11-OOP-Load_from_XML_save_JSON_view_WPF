@@ -95,7 +95,7 @@ namespace OOP_Organization
         #endregion Properties
 
         #region Methods;
-        
+
         private void AddMeToDepartment()
         {
             if (department == repository.company.Name)
@@ -106,11 +106,18 @@ namespace OOP_Organization
             else
             {
                 Department father = repository.departments.Find(item => item.Name == department);
-                father.employees.Add(this);
+
+                if (father.employees.Count > 0)
+                    CountSalary(father.employees[0]);
+
+                father.employees.Add(this);                
                 ++father.NumberOfEmployees;
                 ++repository.company.NumberOfEmployees;
             }
         }
+
+       public virtual void CountSalary(Employee headOfDepartment)
+       { }
 
         public string print()
         {

@@ -27,13 +27,27 @@ namespace OOP_Organization
 
         public Intern() : this(1, "", "", 0,"",0) { }
 
+        public void AddSalary(Employee headOfDepartment)
+        {
+            headOfDepartment.Salary += (Salary * 0.15f);
+
+            AddSalary();
+        }
+
+        public override void CountSalary(Employee headOfDepartment)
+        {
+            AddSalary(headOfDepartment);
+        }
+
         public void AddSalary()
         {
-            var headOfDeaprtment = repository.employees.Find(item => (item is HeadOfDepartment) && (item.Department == Department));
-            headOfDeaprtment.Salary += (Salary * 0.15f);
-
-            var headOfOrganization = repository.employees.Find(item => (item is HeadOfOrganization) && (item.Department == repository.company.Name));
+            var headOfOrganization = repository.company.employees.Find(item => (item is HeadOfOrganization) && (item.Department == repository.company.Name));
             headOfOrganization.Salary += Salary;
+        }
+
+        private Department exactDepartment(List<Department> departments)
+        {
+            return departments.Find(item => (item is Division) && (item.Name == Department));
         }
     }
 }

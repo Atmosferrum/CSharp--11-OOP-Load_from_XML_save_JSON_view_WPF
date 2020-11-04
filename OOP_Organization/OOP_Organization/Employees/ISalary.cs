@@ -9,5 +9,7 @@ namespace OOP_Organization.Employees
     interface ISalary
     {
         void AddSalary();
+
+        void AddSalary(Employee headOfDepartment);
     }
 }

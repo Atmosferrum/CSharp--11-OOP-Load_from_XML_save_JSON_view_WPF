@@ -62,6 +62,7 @@ namespace OOP_Organization
         {
             Brush background = new LinearGradientBrush(Colors.DeepSkyBlue, Colors.Teal, 45);
             Brush border = new LinearGradientBrush(Colors.Teal, Colors.DeepSkyBlue, 45);
+
             foreach (Employee emply in employees)
             {
                 TreeViewItem item = new TreeViewItem
@@ -78,7 +79,7 @@ namespace OOP_Organization
                 };
 
                 treeView.Items.Add(item);
-            }
+            }    
         }
 
         private void ShowEmployee(List<Employee> employees, TreeViewItem treeViewItem)
@@ -87,6 +88,12 @@ namespace OOP_Organization
             Brush border = new LinearGradientBrush(Colors.Teal, Colors.DeepSkyBlue, 45);
             foreach (Employee emply in employees)
             {
+                if(emply is HeadOfDepartment)
+                {
+                    if (emply.Salary < 1300)
+                        emply.Salary = 1300;
+                }
+
                 TreeViewItem item = new TreeViewItem
                 {
                     Header = $"{emply.Name} {emply.LastName} {emply.Age}" +

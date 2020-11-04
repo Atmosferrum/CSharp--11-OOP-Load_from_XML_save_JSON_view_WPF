@@ -28,12 +28,21 @@ namespace OOP_Organization
 
         public Worker() : this(1, "", "", 0, "", 0) { }
 
+        public override void CountSalary(Employee headOfDepartment)
+        {
+            AddSalary(headOfDepartment);
+        }
+
+        public void AddSalary(Employee headOfDepartment)
+        {            
+            headOfDepartment.Salary += (Salary * 0.15f);
+
+            AddSalary();
+        }
+
         public void AddSalary()
         {
-            var headOfDeaprtment = repository.employees.Find(item => (item is HeadOfDepartment) && (item.Department == Department));
-            headOfDeaprtment.Salary += (Salary * 0.15f);
-
-            var headOfOrganization = repository.employees.Find(item => (item is HeadOfOrganization) && (item.Department == repository.company.Name));
+            var headOfOrganization = repository.company.employees.Find(item => (item is HeadOfOrganization) && (item.Department == repository.company.Name));
             headOfOrganization.Salary += Salary;
         }
     }

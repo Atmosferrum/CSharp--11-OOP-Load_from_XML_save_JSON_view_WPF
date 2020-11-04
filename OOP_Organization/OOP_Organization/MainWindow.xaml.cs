@@ -1,17 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace OOP_Organization
 {
@@ -20,10 +10,13 @@ namespace OOP_Organization
     /// </summary>
     public partial class MainWindow : Window
     {
-        string path = "new.xml";
+        const string path = "new.xml"; //Path to Comapny DATA
 
-        Repository repository;
-
+        Repository repository; //Repository for Company DATA
+        
+        /// <summary>
+        /// Main Initializator
+        /// </summary>
         public MainWindow()
         {
             InitializeComponent();
@@ -33,6 +26,10 @@ namespace OOP_Organization
             ShowCompany(repository);
         }
 
+        /// <summary>
+        /// Method to show TreeView of a Comapny
+        /// </summary>
+        /// <param name="repository">Repository with Company DATA</param>
         private void ShowCompany(Repository repository)
         {
             Brush background = new LinearGradientBrush(Colors.Turquoise, Colors.Teal, 45);
@@ -58,6 +55,11 @@ namespace OOP_Organization
                     ShowDepartment(repository.company.departments, item);
         }
 
+        /// <summary>
+        /// Method to ADD Employee to TreeView (Company version)
+        /// </summary>
+        /// <param name="employees">List of Employees to SHOW</param>
+        /// <param name="treeView">TreeView to ADD Employees</param>
         private void ShowEmployee(List<Employee> employees, TreeView treeView)
         {
             Brush background = new LinearGradientBrush(Colors.DeepSkyBlue, Colors.Teal, 45);
@@ -82,6 +84,11 @@ namespace OOP_Organization
             }    
         }
 
+        /// <summary>
+        /// Method to ADD Employee to TreeViewItem (Departments version)
+        /// </summary>
+        /// <param name="employees">List of Employees to SHOW</param>
+        /// <param name="treeViewItem">TreeViewItem to ADD Employees</param>
         private void ShowEmployee(List<Employee> employees, TreeViewItem treeViewItem)
         {
             Brush background = new LinearGradientBrush(Colors.DeepSkyBlue, Colors.Teal, 45);
@@ -111,6 +118,11 @@ namespace OOP_Organization
             }
         }
 
+        /// <summary>
+        /// Method to ADD Employee to TreeView (Comapny version)
+        /// </summary>
+        /// <param name="departments">List of Departments to SHOW</param>
+        /// <param name="treeView">TreeView to ADD Department</param>
         private void ShowDepartment(List<Department> departments, TreeView treeView)
         {
             foreach (Department dept in departments)
@@ -139,6 +151,11 @@ namespace OOP_Organization
             }
         }
 
+        /// <summary>
+        /// Method to ADD Employee to TreeViewItem (Department version)
+        /// </summary>
+        /// <param name="departments">List of Departments to SHOW</param>
+        /// <param name="treeViewItem">TreeViewItem to ADD Department</param>
         private void ShowDepartment(List<Department> departments, TreeViewItem treeViewItem)
         {
             foreach (Department dept in departments)

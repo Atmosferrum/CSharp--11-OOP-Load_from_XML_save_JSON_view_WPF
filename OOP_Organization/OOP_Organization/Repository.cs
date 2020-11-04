@@ -1,13 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.IO;
-//using System.Xml.Linq;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using System.Diagnostics;
 using System.Xml;
 
 namespace OOP_Organization
@@ -16,36 +7,22 @@ namespace OOP_Organization
     {
         #region Fields;
 
-        public List<Employee> employees; //Employees DATA array
-
-        public List<Department> departments; //Departments DATA array
-
-        //List<XElement> xElements; //XML Data
-
         private string path; //PATH to file
 
-        public int employeeIndex; //Current INDEX for employee to add
+        public Company company; //Class of Company that contains all Departments and Employees 
 
-        public int departmentIndex; //Current INDEX for department to add
-
-        public Company company;
-
-        const string companyName = "Normandy";
+        const string companyName = "Normandy"; //Name of the Company
 
         #endregion Fields
 
         #region Constructor;
         /// <summary>
-        /// Constructor
+        /// Constructor for Repository
         /// </summary>
         /// <param name="Path">Path to file to construct</param>
         public Repository(string Path)
         {
-            this.path = Path;
-            this.employeeIndex = 0;
-            this.departmentIndex = 0;
-            employees = new List<Employee>();
-            departments = new List<Department>();
+            this.path = Path;            
 
             company = new Company(companyName);
 
@@ -56,6 +33,10 @@ namespace OOP_Organization
 
         #region Methods;
 
+        /// <summary>
+        /// Load & Show Company from XML File
+        /// </summary>
+        /// <param name="path">Path to Company XML File</param>
         void autoDesiarilizationXML(string path)
         {
             XmlDocument xDoc = new XmlDocument();
@@ -65,15 +46,16 @@ namespace OOP_Organization
 
             XmlNode xCompany = xRoot;
 
-
             Company company = new Company(Convert.ToString(xCompany.Attributes.GetNamedItem("name").Value));
 
             if (xCompany.HasChildNodes)
                 Recursion(xCompany);
-
-            ShowCompany();
         }
 
+        /// <summary>
+        /// Load inner Departments & Employees of a Company into Classes
+        /// </summary>
+        /// <param name="father">Parent Department for following Departments & Employees</param>
         void Recursion(XmlNode father)
         {
             var nodes = father.ChildNodes;
@@ -109,6 +91,11 @@ namespace OOP_Organization
             }
         }
 
+        /// <summary>
+        /// Give Employee Valuse for Properties
+        /// </summary>
+        /// <param name="node">XML Node to get Values</param>
+        /// <param name="emply">Employee to add Values</param>
         void DefineEmployeeClass(XmlNode node, Employee emply)
         {
             emply.Number = Convert.ToInt32(node.Attributes.GetNamedItem("number").Value);
@@ -118,44 +105,18 @@ namespace OOP_Organization
             emply.Department = Convert.ToString(node.Attributes.GetNamedItem("department").Value);
             emply.DaysWorked = Convert.ToInt32(node.Attributes.GetNamedItem("daysWorked").Value);
             emply.Repository = this;
-
-            AddEmployee(emply);
         }
 
+        /// <summary>
+        /// Give Department Values for Properties
+        /// </summary>
+        /// <param name="node">XML node to get Values</param>
+        /// <param name="dept">Department to add Values</param>
         void DefineDepartmentClass(XmlNode node, Department dept)
         {
             dept.Name = Convert.ToString(node.Attributes.GetNamedItem("name").Value);
             dept.ParentDepartment = Convert.ToString(node.Attributes.GetNamedItem("parentDepartment").Value);
             dept.Repository = this;
-
-            AddDepartment(dept);
-        }
-
-
-        void ShowCompany()
-        {
-            foreach (Department dept in departments)
-            {
-                Debug.WriteLine($"{ dept.Name} {dept.ParentDepartment}");
-            }
-
-            foreach (Employee emply in employees)
-            {
-                Debug.WriteLine($"{emply.Name} {emply.Age} {emply.Department}");
-            }
-        }
-
-        void AddEmployee(Employee newEmployee)
-        {
-            employees.Add(newEmployee);
-            this.employeeIndex++;
-
-        }
-
-        void AddDepartment(Department newDepartment)
-        {
-            departments.Add(newDepartment);
-            this.departmentIndex++;
         }
 
         #endregion Methods

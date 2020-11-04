@@ -1,19 +1,27 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace OOP_Organization
+﻿namespace OOP_Organization
 {
     class Bureau : Department
     {
-        public Bureau(string ParentDepartment,
-                      string Name)
-            : base(Name, 
+
+        #region Constructor;
+
+        /// <summary>
+        /// Constructor DERIVED from Department Class
+        /// </summary>
+        /// <param name="Name">Name of Bureau</param>
+        /// <param name="ParentDepartment">Parent Department of Bureau</param>
+        public Bureau(string Name,
+                      string ParentDepartment)
+            : base(Name,
                   ParentDepartment)
         { }
 
-        public Bureau() : this( "", "") { }
-    }    
+        /// <summary>
+        /// Default Constructor for Bureau
+        /// </summary>
+        public Bureau() : this("", "") { }
+
+        #endregion Constructor
+
+    }
 }

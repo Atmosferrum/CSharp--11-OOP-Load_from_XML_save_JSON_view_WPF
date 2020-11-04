@@ -11,21 +11,25 @@ namespace OOP_Organization
 
         #region Fields;
 
-        public List<Department> departments;
-        public List<Employee> employees;
+        public List<Department> departments; //List of HEAD Departments in Company
+        public List<Employee> employees; //List of HEAD Employees in Company
 
-        private string name;
+        private string name; //Name of the Company
 
-        private int numberOfDepartments;
+        private int numberOfDepartments; //Number of HEAD Departments in Comapny
 
-        private int numberOfEmployees;
+        private int numberOfEmployees; //Number of HEAD Employees in Company
 
-        private string dateOfCreation;
+        private string dateOfCreation; //Company's Date Of Creation
 
         #endregion Fields
 
         #region Constructor;
 
+        /// <summary>
+        /// Constructor for Company
+        /// </summary>
+        /// <param name="Name">Name of the Company</param>
         public Company(string Name)
         {
             this.name = Name;
@@ -38,21 +42,20 @@ namespace OOP_Organization
 
         #endregion Constructor
 
-
         #region Properties;
 
-        public string Name
+        public string Name //Name Property
         {
             get { return this.name; }            
         }
 
-        public int NumberOfDepartments
+        public int NumberOfDepartments //Number Of Departments Property
         {
             get { return this.numberOfDepartments; }
             set { this.numberOfDepartments = value; }
         }
 
-        public int NumberOfEmployees
+        public int NumberOfEmployees //Number Of Employees Property
         {
             get { return this.numberOfEmployees; }
             set { this.numberOfEmployees = value; }

@@ -52,10 +52,10 @@ namespace OOP_Organization
             Main_Tree.Items.Add(item);
 
             if (repository.company.employees.Count > 0)
-                ShowEmployee(repository.company.employees, Main_Tree);
+                ShowEmployee(repository.company.employees, item);
 
             if (repository.company.departments.Count > 0)                
-                    ShowDepartment(repository.company.departments, Main_Tree);
+                    ShowDepartment(repository.company.departments, item);
         }
 
         private void ShowEmployee(List<Employee> employees, TreeView treeView)
